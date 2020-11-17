@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8" />
+    <!doctype html>
+  </head>
+
+
+  <style>
+    .panel {
+      padding: 30px 10px;
+      display: none;
+      background-color: white;
+      overflow: hidden;
+      background-color: #f2f2f2;
+    }
+
+    #planes {
+      background-color: #f2f2f2;
+      height: 24px
+    }
+
+    .input {
+      outline-style: solid;
+      background-color: white
+    }
+
+    .sometext {
+      float: right
+    }
+
+    .input {
+      padding-top: 20px;
+      padding-right: 20px;
+      padding-bottom: 20px;
+      padding-left: 30px;
+    }
+
+    div {
+      margin: 20px 0px 15px 10px;
+    }
+
+    #maincontent {
+      background-color: #f2f2f2
+    }
+
+  </style>
+
+
+  <body>
+    <div id=maincontent class="input">
+
+      <div class="input">
+        1.&#8195;
+        <input type="file" onchange="readFile(this)">
+        <span class="sometext"> Select .blk file for upload</span>
+      </div>
+
+      <div class="input">
+        <form id="radio1" name="radio1">
+          2. &nbsp;
+          <input type="radio" id="ground" value="ground" name="vehicles">
+          <label for="ground">Ground Vehicle Misson</label><br>
+          &#8195;&nbsp; <input type="radio" id="air" value="air" name="vehicles">
+          <label for="air">Air Vehicle Misson</label><br>
+        </form>
+        <span class="sometext"> Select mission type</span>
+        <br>
+        <div id="panel" class="panel">
+          <a id="radiocontainer">
+          </a>
+          <span class="sometext"> Select vehicle country</span>
+        </div>
+      </div>
+
+      <div class="input">
+        3.&#8195;<span class="sometext"> Select your desired vehicle from the menu</span>
+        <a id="container">
+        </a>
+
+
+
+      </div>
+      <div class="input">
+        4.&#8195;
+        <input type="button" id="dwn-btn" value="Download file" />
+        <span class="sometext"> Download modified file</span>
+      </div>
+    </div>
+
+    <script>
+      //Arrays for vehicle lists
+      var USAPLANES = [
+        "a-20g", "USA A-20G-25",
+        "b-17g", "USA B-17G-60-VE",
+        "c-47", "USA C-47",
+        "p-47d", "USA P-47D-25",
+        "p-47d_22_re", "USA P-47D-22 RE",
+        "p-51c-10-nt", "USA P-51C-10",
+        "p-51d-5", "USA P-51D-5",
+        "spitfire_ix_usa", "USA ▃Spitfire LF Mk IXc",
+        "p-40e", "USA P-40E-1",
+        "p-40c", "USA P-40C",
+        "b_24d", "USA B-24D-25-CO",
+        "pb4y-2", "USA PB4Y-2",
+        "f4f-4", "USA F4F-4",
+        "f4u-1a", "USA F4U-1A",
+        "f4u-1c", "USA F4U-1C",
+        "f4u-4", "USA F4U-4",
+        "f4u-4b", "USA F4U-4B",
+        "f4u-4b_vmf_214", "USA F4U-4B VMF-214",
+        "f4u-1d", "USA F4U-1D",
+        "f4u-6_au-1", "USA AU-1",
+        "f6f-3", "USA F6F-5",
+        "yp-38", "USA YP-38",
+        "p-38g", "USA P-38G-1",
+        "p-39n", "USA P-39N-0",
+        "p-39q_5", "USA P-39Q-5",
+        "sbd-3", "USA SBD-3",
+        "tbf-1c", "USA TBF-1C",
+        "f4f-3", "USA F4F-3",
+        "os2u_1", "USA OS2U-1",
+        "os2u_3", "USA OS2U-3",
+        "f2a-3", "USA F2A-3",
+        "f2a-1", "USA F2A-1",
+        "b-17e", "USA B-17E",
+        "b-17e_late", "USA B-17E/L",
+        "pby-5", "USA PBY-5 Catalina",
+        "pby-5a", "USA PBY-5a Catalina",
+        "pbm_3", "USA PBM-3 Mariner",
+        "b-29", "USA B-29A-BN",
+        "f9f-2", "USA F9F-2",
+        "f9f-5", "USA F9F-5",
+        "a-26c-45-dt", "USA A-26C-45DT",
+        "b_10b", "USA B-10B",
+        "a-26b", "USA A-26B-50",
+        "a-26b_10", "USA A-26B-10",
+        "p-63a-10", "USA P-63A-10",
+        "p-63a-5", "USA P-63A-5",
+        "p-63c-5", "USA P-63C-5",
+        "p-63c-5_kingcobra_animal_version", "USA ␠Kingcobra",
+        "f-86a-5", "USA F-86A-5",
+        "f-86f-2", "USA F-86F-2",
+        "f-86f-25", "USA F-86F-25",
+        "f-86f-35", "USA F-86F-35",
+        "p-26a_33", "USA P-26A-33",
+        "p-26a_34", "USA P-26A-34",
+        "p-26a_34_m2", "USA P-26A-34 M2",
+        "p-26a_35", "USA P-26A-35",
+        "p-26b_35", "USA P-26B-35",
+        "ki_61_1a_otsu_usa", "USA ▃Ki-61-Ib",
+        "a6m2_zero_usa", "USA ▃A6M2",
+        "p-38g_metal", "USA XP-38G",
+        "bf-109f-4_usa", "USA ▃Bf 109 F-4",
+        "a-26c", "USA A-26C-45",
+        "b_25j_1", "USA B-25J-1",
+        "b_25j_20", "USA B-25J-20",
+        "xp-50", "USA XP-50",
+        "xp-55", "USA XP-55",
+        "p-47d-28", "USA P-47D-28",
+        "f-80", "USA F-80C-10",
+        "p-51d-20-na", "USA P-51D-20-NA",
+        "p-40f_10", "USA P-40F-10",
+        "a_4b", "USA A-4B",
+        "f11f_1_late", "USA F11F-1",
+        "fj_4b", "USA FJ-4B",
+        "fj_4b_agm_12b", "USA FJ-4B VMF-232",
+        "f2a-1_thach", "USA Thach's F2A-1",
+        "p-36a", "USA P-36A",
+        "p-36a_rasmussen", "USA Rasmussen's P-36A",
+        "p-36c", "USA P-36C",
+        "p-36g", "USA P-36G",
+        "btd-1", "USA BTD-1",
+        "xf5f", "USA XF5F",
+        "f8f1", "USA F8F-1",
+        "f8f1b", "USA F8F-1B",
+        "p-51d-30_usaaf_korea", "USA P-51D-30",
+        "p-400", "USA P-400",
+        "f-80a", "USA F-80A-5",
+        "f-84b", "USA F-84B-26",
+        "f-82e", "USA F-82E",
+        "f4u-1a_usmc", "USA F4U-1A (USMC)",
+        "pbj_1h", "USA PBJ-1H",
+        "pbj_1j", "USA PBJ-1J",
+        "f7f1", "USA F7F-1",
+        "b-57", "USA B-57A",
+        "ki_43_2_late", "USA ▃Ki-43-II",
+        "fw-190a-8_usa", "USA ▃Fw 190 A-8",
+        "f2h-2", "USA F2H-2",
+        "f3h-2", "USA F3H-2",
+        "b-57b", "USA B-57B",
+        "douglas_ad_2", "USA AD-2",
+        "douglas_ad_4", "USA AD-4",
+        "a2d", "USA A2D-1",
+        "am_1_mauler", "USA AM-1",
+        "p-47m-1-re", "USA P-47M-1-RE",
+        "p-47m-1-re_boxted", "USA ⋠P-47M-1-RE",
+        "p-51d-10", "USA P-51D-10",
+        "p-51_mk1a_usaaf", "USA P-51",
+        "p-51_a-36", "USA A-36",
+        "sb2c_1c", "USA SB2C-1c",
+        "p-38e", "USA P-38E",
+        "p-38k", "USA P-38K",
+        "p-38l", "USA P-38L-5-LO",
+        "sb2c_4", "USA SB2C-4",
+        "p-51a_tl", "USA P-51A",
+        "tbd-1_1938", "USA TBD-1",
+        "p-38j", "USA P-38J-15",
+        "f3f-2", "USA F3F-2",
+        "f3f-2_galer", "USA Galer's F3F-2",
+        "p-43a-1", "USA P-43A-1",
+        "p-61a_1", "USA P-61A-1",
+        "p-61c_1", "USA P-61C-1",
+        "p-38j_marge", "USA Bong's P-38J-15",
+        "b_18a", "USA B-18A",
+        "p-47n-15", "USA P-47N-15",
+        "f7f3", "USA F7F-3",
+        "f9f-8", "USA F9F-8",
+        "b_34", "USA B-34",
+        "pv_2d", "USA PV-2D",
+        "f6f-5n", "USA F6F-5N",
+        "f-84g", "USA F-84G-21-RE",
+        "p-51h-5_na", "USA P-51H-5-NA",
+        "xa_38", "USA XA-38",
+        "md_460_usa", "USA Super Mystere B2",
+        "f-104a", "USA F-104A",
+        "f-104c", "USA F-104C",
+        "f3d_1", "USA F3D-1",
+        "sb2u-3", "USA SB2U-3",
+        "sb2u-2", "USA SB2U-2",
+        "f-100d", "USA F-100D",
+        "p-59a", "USA P-59A",
+        "f-4c", "USA F-4C Phantom II",
+        "f-4e", "USA F-4E Phantom II",
+        "f-89d", "USA F-89D",
+        "f-89b", "USA F-89B"
+      ];
+      var GERPLANES = [
+        "arado-196a-3", "GER Ar 196 A-3",
+        "arado-234", "GER Ar 234 B-2",
+        "bf-109e-1", "GER Bf 109 E-1",
+        "bf-109e-3", "GER Bf 109 E-3",
+        "bf-109f-1", "GER Bf 109 F-1",
+        "bf-109f-2", "GER Bf 109 F-2",
+        "bf-109f-4", "GER Bf 109 F-4",
+        "bf-109g-2", "GER Bf 109 G-2/trop",
+        "bf-109g-6", "GER Bf 109 G-6",
+        "bf-109g-10", "GER Bf 109 G-10",
+        "bf-109k-4", "GER Bf 109 K-4",
+        "bf-110c-4", "GER Bf 110 C-7",
+        "bf-110c-6", "GER Bf 110 C-6",
+        "bf-110f-2", "GER Bf 110 F-2",
+        "bf-110g-2", "GER Bf 110 G-2",
+        "fau-1", "GER V-1",
+        "fw-190a-5", "GER Fw 190 A-5/U12",
+        "fw-190a-5_u2", "GER Fw 190 A-5/U2",
+        "fw-190a-5_cannons", "GER Fw 190 A-5",
+        "fw-190a-5_cannons_tutorial", "GER Fw 190 A-5",
+        "fw-190c", "GER Fw 190 C",
+        "fw-190d-9", "GER Fw 190 D-9",
+        "fw-190a-8", "GER Fw 190 A-8",
+        "fw-190f-8", "GER Fw 190 F-8",
+        "fw-190d-12", "GER Fw 190 D-12",
+        "he-111h-2", "GER He 111 H-3",
+        "he-111h-6", "GER He 111 H-6",
+        "he-111h-16_winter", "GER He 111 H-16",
+        "he-162a-2", "GER He 162 A-2",
+        "ju-52", "GER Ju 52",
+        "ju-87b-2", "GER Ju 87 B-2",
+        "ju-87d-3", "GER Ju 87 D-3",
+        "ju-87g_2", "GER Ju 87 G-2",
+        "la-5fn_luftwaffe", "GER ▀La-5FN",
+        "mc-202", "GER ▀C.202",
+        "me-163b", "GER Me 163 B",
+        "me-163b-0", "GER Me 163 B-0",
+        "me-262a-1a", "GER Me 262 A-1a",
+        "p-47d_luftwaffe", "GER ▀P-47D",
+        "ta-152h-1", "GER Ta 152 H-1",
+        "ju-88a-4", "GER Ju 88 A-4",
+        "ju-88c-6", "GER Ju 88 C-6",
+        "fiat_cr42", "GER ▀CR.42",
+        "fiat_g50_seria2", "GER ▀G.50 serie 2",
+        "fiat_g50_seria7as", "GER ▀G.50 AS serie 7",
+        "hs-129b-2", "GER Hs 129 B-2",
+        "mc200_serie3", "GER ▀C.200 serie 3",
+        "mc200_serie7", "GER ▀C.200 serie 7",
+        "ju-87r-2", "GER Ju 87 R-2",
+        "bf-109f-4_trop", "GER Bf 109 F-4/trop",
+        "ju-87d-5", "GER Ju 87 D-5",
+        "ju-87g_1", "GER Ju 87 G-1",
+        "me-410a-1", "GER Me 410 A-1",
+        "fw-190d-13", "GER Fw 190 D-13",
+        "me-410a-1_u2", "GER Me 410 A-1/U2",
+        "me-410a-1_u4", "GER Me 410 A-1/U4",
+        "me-410b-1", "GER Me 410 B-1",
+        "me-410b-1_u2", "GER Me 410 B-1/U2",
+        "me-410b-2_u4", "GER Me 410 B-2/U4",
+        "me-410b-6_r3", "GER Me 410 B-6/R3",
+        "do_217e_2", "GER Do 217 E-2",
+        "he_112a_0", "GER He 112 A-0",
+        "he_112v_5", "GER He 112 V-5",
+        "sm_79_1937", "GER ▀S.M.79 serie 4",
+        "sm_79_1939", "GER ▀S.M.79 serie 8",
+        "sm_79_1941", "GER ▀S.M.79 AS",
+        "sm_79_1942", "GER ▀S.M.79 bis/N",
+        "sm_79_1943", "GER ▀S.M.79 bis/T.M",
+        "sm_79_iar", "GER ▀S.M.79 B",
+        "do_217e_4", "GER Do 217 E-4",
+        "do_217j_1", "GER Do 217 J-1",
+        "do_217j_2", "GER Do 217 J-2",
+        "he51a1", "GER He 51 A-1",
+        "he51b_2w", "GER He 51 B-2/H",
+        "he51b1", "GER He 51 B-1",
+        "he51c1", "GER He 51 C-1",
+        "he51c1_late", "GER He 51 C-1/L",
+        "wellington_mk1c_luftwaffe", "GER ▀Wellington Mk Ic",
+        "do_217k_1", "GER Do 217 K-1",
+        "do_217m_1", "GER Do 217 M-1",
+        "he_112b_0", "GER He 112 B-0",
+        "he_112b_1", "GER He 112 B-1/U2",
+        "he_112b_2", "GER He 112 B-2/U2",
+        "do_217n_1", "GER Do 217 N-1",
+        "do_217n_2", "GER Do 217 N-2",
+        "bf-109z", "GER Bf 109 Z",
+        "fiat_cr42_marcolin", "GER ▀Marcolin's C.R.42 CN",
+        "h-75a-2_finland", "GER ▀Hawk H-75A-2",
+        "hs-129b-3", "GER Hs 129 B-3",
+        "me-262a-1a_u4", "GER Me 262 A-1/U4",
+        "me-262c-2b", "GER Me 262 C-2b",
+        "f-86_canadair_german", "GER CL-13A Mk 5",
+        "f-86_cl_13b_mk6", "GER CL-13B Mk.6",
+        "fw-190a-1", "GER Fw 190 A-1",
+        "mig-15bis_nr23_german", "GER ▀MiG-15bis",
+        "il_28_german", "GER ▀IL-28",
+        "me-262c-1a", "GER Me 262 C-1a",
+        "hs-129b-2_romania", "GER Hs 129 B-2 (Romania)",
+        "bf-109g-2_romania", "GER Bf 109 G-2",
+        "fw-190a-4", "GER Fw 190 A-4",
+        "go229_v3", "GER Ho 229 V3",
+        "yak-1b_luftwaffe", "GER ▀Yak-1B",
+        "tempest_mkv_luftwaffe", "GER ▀Tempest Mk V",
+        "bf-109g-14", "GER Bf 109 G-14",
+        "fw_200c_1", "GER Fw 200 C-1",
+        "arado-234c-3", "GER Ar 234 C-3",
+        "bf-109b_2", "GER Bf 109 B-1",
+        "bf-109a_1", "GER Flegel's Bf 109 A",
+        "il_2_1942_luftwaffe", "GER ▀IL-2 (1942)",
+        "do_17e_1", "GER Do 17 E-1",
+        "bf-109e-4", "GER Bf 109 E-4",
+        "bf-109e-7", "GER Bf 109 E-7/U2",
+        "do_17z_2", "GER Do 17 Z-2",
+        "do_17z_7", "GER Do 17 Z-7",
+        "mig-19s", "GER ▀MiG-19S",
+        "ju-88a-1", "GER Ju 88 A-1",
+        "do_335a_0", "GER Do 335 A-0",
+        "do_335a_1", "GER Do 335 A-1",
+        "do_335b_2", "GER Do 335 B-2",
+        "ta-152c", "GER Ta 152 C-3",
+        "fw-189a-1", "GER Fw 189 A-1",
+        "hs-123a-1", "GER Hs 123 A-1",
+        "he_219a_7", "GER He 219 A-7",
+        "he-162a-1", "GER He 162 A-1",
+        "bv-238", "GER BV 238",
+        "he_100d_1", "GER He 100 D-1",
+        "ta_154a_1", "GER Ta 154 A-1",
+        "me-262a-2a", "GER Me 262 A-2a",
+        "f-104g", "GER F-104G",
+        "he-177a-5", "GER He 177 A-5",
+        "ju-288c", "GER Ju 288 C",
+        "ju-188a-2", "GER Ju 188 A-2",
+        "sea_hawk_mk100", "GER Sea Hawk Mk.100",
+        "ju-388j", "GER Ju 388 J",
+        "me_264", "GER Me 264",
+        "f-86k_late_german", "GER ▀F-86K",
+        "fiat_g91_r3", "GER ▀G.91 R/3",
+        "fiat_g91_r4_german", "GER ▀G.91 R/4",
+        "mig-21_mf", "GER ▀MiG-21MF",
+        "me-262a1_u1", "GER Me 262 A-1a/U1",
+      ];
+      var RUSPLANES = [
+        "be_6", "RUS Be-6",
+        "su-6_am42", "RUS Su-6 (AM-42)",
+        "su_6_single", "RUS Су-6",
+        "i-153_m62", "RUS I-153 M-62",
+        "i-153p", "RUS I-153P",
+        "i-15_1934", "RUS I-15 WR",
+        "i-15_1935", "RUS I-15 M-22",
+        "i-15_1935_moscow", "RUS I-15R",
+        "i-16_type18", "RUS I-16 type 18",
+        "i-16_type28", "RUS I-16 type 28",
+        "il_28", "RUS IL-28",
+        "il_28sh", "RUS IL-28Sh",
+        "il-10", "RUS IL-10",
+        "il-2i", "RUS IL-2 (1942)",
+        "il-2m", "RUS IL-2M type 3",
+        "il-4", "RUS IL-4",
+        "la-5fn", "RUS La-5FN",
+        "la-7", "RUS La-7",
+        "li-2", "RUS Li-2",
+        "mbr-2", "RUS MBR-2-M-34",
+        "po-2", "RUS Po-2",
+        "yak-1b", "RUS Yak-1B",
+        "yak-3", "RUS Yak-3",
+        "yak-3t", "RUS Yak-3T",
+        "yak-9t", "RUS Yak-9T",
+        "yak-3u", "RUS Yak-3U",
+        "yak-7b", "RUS Yak-7B",
+        "lagg-3-35", "RUS LaGG-3-35",
+        "p-39n_su", "RUS ▂Pokryshkin's P-39N-0",
+        "p-39k_1", "RUS ▂P-39K-1",
+        "p-39q_15", "RUS ▂P-39Q-15",
+        "la-9", "RUS La-9",
+        "mig-9", "RUS MiG-9",
+        "tu-2", "RUS Tu-2S",
+        "tu-2_early", "RUS Tu-2",
+        "tu-2_postwar", "RUS Tu-2S-44",
+        "tu-2_postwar_late", "RUS Tu-2S-59",
+        "bb-1", "RUS BB-1",
+        "su-2_m82", "RUS Su-2 (M-82)",
+        "su-2_mv5", "RUS Su-2 MV-5",
+        "su-2_tss1", "RUS Su-2 TSS-1",
+        "su-7b", "RUS Su-7B",
+        "su-7bkl", "RUS Su-7BKL",
+        "pe-2-1", "RUS Pe-2-1",
+        "mig-15", "RUS MiG-15bis",
+        "mig-9_ussr", "RUS MiG-9 (l)",
+        "er-2_ach30b_late", "RUS Yer-2 (ACh-30B) (l)",
+        "er-2_ach30b_early", "RUS Yer-2 (ACh-30B) (e)",
+        "er-2_m105_mv3", "RUS Yer-2 (M-105)",
+        "er-2_m105_tat", "RUS Yer-2 (M-105) TAT",
+        "er-2_m105r_lu2b", "RUS Yer-2 (M-105R) LU",
+        "er-2_m105r_tat", "RUS Yer-2 (M-105R) TAT",
+        "pby-5a_ussr", "RUS ▂PBY-5a Catalina",
+        "p-40e_ussr", "RUS ▂P-40E-1",
+        "p-63a-10_ussr", "RUS ▂P-63A-10",
+        "p-63a-5_ussr", "RUS ▂P-63A-5",
+        "p-63c-5_ussr", "RUS ▂P-63C-5",
+        "sb_2m_100", "RUS SB 2M-100",
+        "sb_2m_100a", "RUS SB 2M-100A",
+        "sb_2m_100a_spain", "RUS SB 2M-100A /S",
+        "sb_2m_103_mv3", "RUS SB 2M-103 MV-3",
+        "sb_2m_103c", "RUS SB 2M-103",
+        "sb_2m_103u", "RUS SB 2M-103U",
+        "sb_2m_103u_mv3", "RUS SB 2M-103U MV-3",
+        "sb_2m_105", "RUS SB 2M-105",
+        "ar_2", "RUS Ar-2",
+        "pe-2-31", "RUS Pe-2-31",
+        "pe-2-83", "RUS Pe-2-83",
+        "pe-2-110", "RUS Pe-2-110",
+        "pe-2-205", "RUS Pe-2-205",
+        "pe-2-359", "RUS Pe-2-359",
+        "pe-3", "RUS Pe-3",
+        "i_29", "RUS I-29",
+        "yak-4", "RUS Yak-4",
+        "yak_2_kabb", "RUS Yak-2 KABB",
+        "pe-3_bis", "RUS Pe-3bis",
+        "pe-3_early", "RUS Pe-3 (e)",
+        "b_25j_30", "RUS B-25J-30",
+        "b_25j_30_vvs_ussr", "RUS ▂B-25J-30",
+        "yak-15", "RUS Yak-15",
+        "yak-15_early", "RUS Yak-15P",
+        "yak-9p", "RUS Yak-9P",
+        "mig-15_ns23", "RUS MiG-15",
+        "mig-15bis_ns23", "RUS MiG-15bis NS-23",
+        "mig_3_series_1_15", "RUS MiG-3-15",
+        "mig_3_series_1_15_bk_pod", "RUS MiG-3-15 (BK)",
+        "i-15bis", "RUS I-15bis",
+        "i-153_m62_zhukovskiy", "RUS Zhukovsky's I-153-M62",
+        "lagg-3-11", "RUS LaGG-3-11",
+        "lagg-3-23", "RUS LaGG-3-23",
+        "lagg-3-34", "RUS LaGG-3-34",
+        "lagg-3-4", "RUS LaGG-3-4",
+        "lagg-3-66", "RUS LaGG-3-66",
+        "lagg-3-8", "RUS LaGG-3-8",
+        "la-7b-20", "RUS La-7B-20",
+        "la-5_type37_early", "RUS La-5",
+        "la-5_type39", "RUS La-5F",
+        "yak-9k", "RUS Yak-9K",
+        "lagg-i-301", "RUS I-301",
+        "yak-17", "RUS Yak-17",
+        "tb_3_m17_32", "RUS TB-3M-17-32",
+        "yak-3p", "RUS Yak-3P",
+        "yak-9u", "RUS Yak-9U",
+        "yak-9ut", "RUS Yak-9UT",
+        "fw-190d-9_ussr", "RUS ▂Fw 190 D-9",
+        "i_185_m82", "RUS I-185 (M-82)",
+        "i_225", "RUS I-225",
+        "la_174", "RUS La-174",
+        "la-15", "RUS La-15",
+        "i-16_type24", "RUS I-16 type 24",
+        "i-16_type27", "RUS I-16 type 27",
+        "spitfire_ix_ussr", "RUS ▂Spitfire Mk IXc",
+        "i_185_m71_standard", "RUS I-185 (M-71)",
+        "il-10_1946", "RUS IL-10 (1946)",
+        "mig_3_series_34", "RUS MiG-3-34",
+        "il-2m_mstitel", "RUS IL-2M Avenger",
+        "yak-9", "RUS Yak-9",
+        "yak-1_early", "RUS Yak-1",
+        "i-16_type5", "RUS I-16 type 5",
+        "p-47d_ussr", "RUS ▂P-47D-27",
+        "i-16_type10", "RUS I-16 type 10",
+        "il_2_1941", "RUS IL-2 (1941)",
+        "yak-9m", "RUS Golovachev's Yak-9M",
+        "il_2_37_1943", "RUS IL-2-37",
+        "la-7_dolgushin", "RUS Dolgushin's La-7",
+        "il_2m_1943", "RUS IL-2M (1943)",
+        "il_2_m82", "RUS IL-2 M-82",
+        "hurricanemkii_ussr", "RUS ▂Hurricane Mk IIB",
+        "yak-3_vk107", "RUS Yak-3 (VK-107)",
+        "yak-9b", "RUS Yak-9B",
+        "pe-8_m82", "RUS Pe-8",
+        "po-2_nw", "RUS Po-2 Night Witch",
+        "mig-17", "RUS MiG-17",
+        "mig-19pt", "RUS MiG-19PT",
+        "yak-30d", "RUS Yak-30",
+        "tu_4", "RUS Tu-4",
+        "su-6_m71", "RUS Su-6 (M-71F)",
+        "tu_14t", "RUS Tu-14T",
+        "la-11", "RUS La-11",
+        "hp52_hampden_tbmk1_ussr_utk1", "RUS ▂Hampden TB Mk I",
+        "db_3b", "RUS DB-3B",
+        "tandem_mai", "RUS Tandem MAI",
+        "yak-23", "RUS Yak-23",
+        "la_200_toriy", "RUS La-200",
+        "mig-15bis_ish", "RUS MiG-15bis ISH",
+        "i_180", "RUS I-180S",
+        "mig-21_f13", "RUS MiG-21F-13",
+        "mig-21_smt", "RUS MiG-21SMT",
+        "mig-17_cuba", "RUS MiG-17AS",
+        "tis_ma", "RUS TIS MA",
+      ];
+
+      var container
+      var worked = 0;
+      var worked1 = 0;
+      var selectionnum;
+      var vehicletype;
+      var vehiclefrom;
+      var vehiclenat
+      var result;
+      var modresf;
+      var unitvar;
+      var file;
+      var loaded = 0;
+      var name;
+      var selected;
+      var lasttextval;
+      var lastvalueval = "nul";
+      selecttype()
+
+      //Download function 
+      //Creates virtual download link then simulates click
+      function download(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+      }
+
+      //reads uploaded file contents
+      //>>> add regex for support file types
+      function readFile(input) {
+        file = input.files[0];
+
+        let reader = new FileReader();
+
+        reader.readAsText(file);
+
+        reader.onload = function() {
+          //console.log(reader.result);
+          result = reader.result;
+          loaded = 1
+        };
+
+        reader.onerror = function() {
+          console.log(reader.error);
+        };
+      }
+
+      //replaces vehicle property text in .blk file.
+      //>>>operates on first instance (always player vehicle?)
+      //>>>add list function for all instances, allow independant modification
+      function modres() {
+        unitvar = document.getElementById("selectorbox").value
+        if (unitvar !== "") {
+          result = result.replace(/unit_class:t=".+"/, `unit_class:t="${unitvar}"`);
+          console.log(result)
+          selected = 1
+        } else {
+          selected = 0
+        }
+
+      }
+
+
+
+      // Start file download.
+      document.getElementById("dwn-btn").addEventListener("click", () => {
+        if (loaded == 1) {
+          modres();
+          console.log(selected)
+          if (selected == 1) {
+            name = file.name.slice(0, -4)
+            // Generate download of file with some given name
+            var text = result;
+            var filename = `${name} (${unitvar}).blk`;
+            download(filename, text);
+          } else {
+            window.alert("No vehicle selected! Please select a vehicle from the menu.")
+          }
+        } else {
+          window.alert("No file selected! Please select a .blk file for upload")
+        }
+      }, false);
+
+      //arrays for nations
+      const nations = [
+        "USA",
+        "GER",
+        "RUS"
+      ]
+
+      //listens for first radio input and creates new radio box
+      //>>> fix css to actually make this drop down
+      function selecttype() {
+        document.getElementById("radio1").addEventListener("click", () => {
+
+          let x = document.getElementsByName('vehicles');
+
+          for (i = 0; i < x.length; i++) {
+            if (x[i].checked) {
+              vehicletype = x[i].value;
+            }
+          }
+
+          console.log(vehicletype)
+          if (worked !== 1) {
+            for (const natval of nations) {
+              var from = document.createElement("input");
+              from.type = "radio"
+              from.name = "vehiclenats";
+              from.id = "vehiclefrom";
+              from.value = `${natval}`;
+
+              var label = document.createElement('label')
+              var text = document.createTextNode(`${natval}`);
+              label.setAttribute("for", "vehiclefrom");
+              label.appendChild(text);
+              document.getElementById("radiocontainer").appendChild(from);
+              document.getElementById("radiocontainer").appendChild(label, document.getElementById("vehiclefrom"));
+              document.getElementById("panel").style.display = "block";
+              worked = 1
+
+            }
+            isfrom()
+          }
+        }, false);
+
+
+
+      }
+      //checks created radio
+      function isfrom() {
+        document.getElementById("radiocontainer").addEventListener("click", () => {
+
+          let y = document.getElementsByName('vehiclenats');
+
+          for (i = 0; i < y.length; i++) {
+            if (y[i].checked) {
+              vehiclenat = y[i].value;
+            }
+          }
+          console.log(vehiclenat)
+          selectionbox()
+
+        }, false);
+      }
+      //generates vehicle selection box based on 'vehicletype' & 'vehiclenat' vars
+      function selectionbox() {
+
+        var select = document.createElement("select");
+        select.name = "vehiclelist";
+        select.id = "selectorbox"
+
+        if (vehicletype == "air" && vehiclenat == "USA") {
+          selectionnum = USAPLANES
+        }
+        if (vehicletype == "air" && vehiclenat == "GER") {
+          selectionnum = GERPLANES
+        }
+        if (vehicletype == "air" && vehiclenat == "RUS") {
+          selectionnum = RUSPLANES
+        }
+
+        for (var val of selectionnum) {
+          var option = document.createElement("option");
+
+          if (val.match(/U.+/) || val.match(/G.+/) || val.match(/R.+/)) {
+            option.value = lastvalueval
+            option.text = val
+            select.appendChild(option);
+          } else {
+            lastvalueval = val;
+          }
+
+        }
+        container = document.getElementById("container")
+        if (worked1 == 0) {
+          container.appendChild(select);
+        } else {
+          container.removeChild(container.childNodes[1]);
+          container.appendChild(select);
+          lastvalueval = ""
+        }
+        worked1 = 1
+      }
+
+    </script>
+  </body>
+
+</html>
